@@ -8,7 +8,7 @@ There are two types of files :
 * The languages files
 
 ### Language list
-```json
+```javascript
 {
    "version":0.2,
    "fr":{                //language identifier 
@@ -24,7 +24,7 @@ There are two types of files :
 
 ### Language file 
 Here the file is **en.lang**
-```json
+```javascript
 {
     "hello" : "Hello, world!\n",
     "stupid_string" : "Orangutan has %d banana.\n", //"identifier" : "value"
