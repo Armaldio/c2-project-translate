@@ -3,7 +3,7 @@
 		"name"       : "Project Translation",
 		"id"         : "armaldio_project_translate",
 		"version"    : "1.0",
-		"description": "",
+		"description": "Allow you to translate your game in different languages",
 		"author"     : "Armaldio",
 		"help url"   : "",
 		"category"   : "Web",
@@ -16,17 +16,20 @@
 //////////////////////////////////////////////////////////////
 // Conditions
 //AddCondition(0, 0, "Cookies enabled", "Browser", "Cookies are enabled", "Browser has cookies enabled.", "CookiesEnabled");
-AddCondition(0, cf_trigger, "Languages loaded", "Languages", "On Languages loaded", "Trigger when languages are succesfully loaded", "OnLoadSuccess");
+AddCondition(0, cf_trigger, "Languages loaded", "Languages", "On Languages loaded", "Trigger when languages are succesfully loaded", "OnImportSuccess");
 
-//AddStringParam("Content", "The JSON to import");
-AddCondition(1, cf_none, "Languages are cached", "Languages", "If language are available offline", "Check if languages are available offline", "IsCached");
+//AddCondition(1, cf_none, "Languages are cached", "Languages", "If language are available offline", "Check if languages are available offline", "IsCached");
 
-AddCondition(2, cf_none, "Cache is outdated", "Languages", "If chache outdated", "Check if local cache is outdated", "OutdatedCache");
+//AddCondition(2, cf_none, "Cache is outdated", "Languages", "If chache outdated", "Check if local cache is outdated", "OutdatedCache");
 
-AddCondition(3, cf_trigger, "Import fail", "Languages", "On Import fail", "When importing from url failed", "OnImportFail");
+AddCondition(3, cf_trigger, "Languages loading fail", "Languages", "On Import fail", "When importing from url failed", "OnImportFail");
+
+AddCondition(4, cf_trigger, "Languages loading progress", "Languages", "On Import progress", "When importing progress changed", "OnProgress");
 
 //////////////////////////////////////////////////////////////
 // Actions
+
+/*
 AddComboParamOption("No");
 AddComboParamOption("Yes");
 AddComboParam("Cache", "Download files for offline usage");
@@ -34,6 +37,10 @@ AddAction(0, 0, "Load from url", "Load", "Import file", "Import Language list", 
 
 AddAction(1, 0, "Load from cache", "Load", "Load languages from cache", "Load languages from cache", "LoadFromCache");
 AddAction(2, 0, "Remove cache", "Cache", "Remove cache", "Remove cache", "RemoveCache");
+*/
+
+AddFileParam("File", "Select a project file to request.");
+AddAction(3, 0, "Load from file", "Load", "Import file {0}", "Import Language list", "ImportFileList");
 
 //////////////////////////////////////////////////////////////
 // Expressions
@@ -41,9 +48,7 @@ AddAction(2, 0, "Remove cache", "Cache", "Remove cache", "Remove cache", "Remove
 AddExpression(0, ef_return_number, "Get languages number", "Translation", "LanguagesNumber", "Get the available languages number");
 
 AddNumberParam("Index", "The index of the language");
-AddExpression(1, ef_return_string, "Get languages name at index", "Translation", "GetLangAt", "Get language name at specific index");
-
-AddExpression(2, ef_return_number, "Get last index", "Translation", "LastImportedIndex", "Get the language index of the last imported language");
+AddExpression(1, ef_return_string, "Get language name at index", "Translation", "GetLangAt", "Get language name at specific index");
 
 AddStringParam("Language", "Must match languages in the list imported at start");
 AddStringParam("Identifier", "The identifier to identify the string");
