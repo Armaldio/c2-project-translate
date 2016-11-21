@@ -42,13 +42,20 @@ AddAction(2, 0, "Remove cache", "Cache", "Remove cache", "Remove cache", "Remove
 AddFileParam("File", "Select a project file to request.");
 AddAction(3, 0, "Load from file", "Load", "Import file {0}", "Import Language list", "ImportFileList");
 
+AddStringParam("Language", "Must match languages in the list imported at start");
+AddAction(4, 0, "Translate text", "Translation", "Translate all default text plugins to {0}", "Translate all default text plugins", "TranslateText");
+
+
 //////////////////////////////////////////////////////////////
 // Expressions
 //AddExpression(3, ef_return_number, "Absolute mouse Y", "Cursor", "AbsoluteY", "Get the mouse cursor Y co-ordinate on the canvas.");
 AddExpression(0, ef_return_number, "Get languages number", "Translation", "LanguagesNumber", "Get the available languages number");
 
 AddNumberParam("Index", "The index of the language");
-AddExpression(1, ef_return_string, "Get language name at index", "Translation", "GetLangAt", "Get language name at specific index");
+AddExpression(1, ef_return_string, "Get language id at index", "Translation", "GetLangAt", "Get language id at specific index");
+
+AddNumberParam("Index", "The index of the language");
+AddExpression(2, ef_return_string, "Get language name at index", "Translation", "GetLangNameAt", "Get language name at specific index");
 
 AddStringParam("Language", "Must match languages in the list imported at start");
 AddStringParam("Identifier", "The identifier to identify the string");

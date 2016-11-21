@@ -206,7 +206,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 
 	String.prototype.startsWith = function (prefix) {
 		return this.indexOf(prefix) === 0;
-	}
+	};
 
 	//////////////////////////////////////
 	// Conditions
@@ -248,6 +248,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 
 			langsLoaded += 1;
 			if (langsLoaded === langsToLoad) {
+				console.log(languages);
 				return true;
 			}
 		}
@@ -299,6 +300,21 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 	 */
 
 	pluginProto.cnds = new Cnds();
+
+	function getString(lang, identifier) {
+		//console.log("a", languages[lang]["keys"].hasOwnProperty(identifier));
+		if (lang in languages) {
+			if (languages[lang]["keys"].hasOwnProperty(identifier)) {
+				return (languages[lang]["keys"][identifier]);
+			}
+			else {
+				return ("[Unknown identifier " + identifier + " ]");
+			}
+		}
+		else {
+			return ("[Unknown language]");
+		}
+	}
 
 	//////////////////////////////////////
 	// Actions
@@ -371,6 +387,28 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 		this.doRequest("langlist", file_, "GET");
 	};
 
+	Acts.prototype.TranslateText = function (lang) {
+		var self = this;
+
+		var instanceObj = self.runtime.objectsByUid;
+		$.each(instanceObj, function (index, value) {
+			if (value.instance_var_names) {
+				var varnames = value.instance_var_names;
+				$.each(varnames, function (i, variable) {
+					if (variable === "lang") {
+						console.log("Got variable " + variable + " = " + value.instance_vars[i]);
+						value.text = getString(lang, value.instance_vars[i]);
+						value.text_changed = true;
+						value.runtime.redraw = true;
+						console.log(getString(lang, value.instance_vars[i]));
+					}
+				})
+			}
+		});
+
+		console.log(self.runtime);
+	};
+
 	/*
 	 Acts.prototype.RemoveCache = function () {
 	 var self   = this;
@@ -392,20 +430,21 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 	};
 
 	Exps.prototype.GetString = function (ret, lang, identifier) {
-		console.log("a", languages[lang].hasOwnProperty(identifier));
-		if (lang in languages) {
-			if (languages[lang].hasOwnProperty(identifier)) {
-				ret.set_string(languages[lang][identifier]);
-			}
-			else {
-				ret.set_string("[Unknown identifier " + identifier + " ]");
-			}
-		}
-		else
-			ret.set_string("[Unknown language]");
+
+		ret.set_string(getString(lang, identifier));
 	};
 
 	Exps.prototype.GetLangAt = function (ret, index) {
+		if (Object.keys(languages)[index]) {
+			var key = Object.keys(languages)[index];
+			ret.set_string(key);
+		}
+		else {
+			console.log("Language number " + index + " doen't exixts");
+		}
+	};
+
+	Exps.prototype.GetLangNameAt = function (ret, index) {
 		if (Object.keys(languages)[index]) {
 			var key = Object.keys(languages)[index];
 			ret.set_string(languages[key].name);
