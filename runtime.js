@@ -396,17 +396,29 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 				var varnames = value.instance_var_names;
 				$.each(varnames, function (i, variable) {
 					if (variable === "lang") {
-						console.log("Got variable " + variable + " = " + value.instance_vars[i]);
+						/**
+						 * Text and spritefonts
+						 */
 						value.text = getString(lang, value.instance_vars[i]);
 						value.text_changed = true;
 						value.runtime.redraw = true;
-						console.log(getString(lang, value.instance_vars[i]));
+
+						/**
+						 * Button
+						 */
+						if (self.runtime.isDomFree)
+							return;
+
+						if (value.isCheckbox || value.elem) {
+							if (value.isCheckbox)
+								value.labelText.nodeValue = getString(lang, value.instance_vars[i]);
+							else
+								value.elem.value = getString(lang, value.instance_vars[i]);
+						}
 					}
 				})
 			}
 		});
-
-		console.log(self.runtime);
 	};
 
 	/*
