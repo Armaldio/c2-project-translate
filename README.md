@@ -2,6 +2,11 @@
 
 ### Translation made easy
 
+The plugin work for :
+* Text
+* Button
+* Spritefont/Spritefont+
+
 ## Configuration files
 There are two types of files : 
 * The language list
@@ -53,4 +58,3 @@ No more pain :)
 ## Coming
 * Variables support
 * Plugin ACE table
-* **Easy way** support for **buttons**, **spritefont/spritefont+**, etc...
