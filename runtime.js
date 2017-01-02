@@ -7,6 +7,7 @@ assert2(cr.plugins_, "cr.plugins_ not created");
 var languages   = {};
 var langsToLoad = 0;
 var langsLoaded = 0;
+var cur_runtime = {};
 
 var langlist = {};
 
@@ -271,8 +272,22 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 		return obj;
 	}
 
+	function getGlobalVar(varname) {
+		var self = this;
+
+		cur_runtime.all_global_vars.forEach(function (val, index) {
+			if (val.name === varname) {
+				varname = val.data;
+				return;
+			}
+		});
+		return varname;
+	}
+
 	function parseVariables(str) {
-		return str;
+		return str.replace(/@(\w+)/g, function (_, $1) {
+			return getGlobalVar($1);
+		});
 	}
 
 	function getString(lang, identifier) {
@@ -280,11 +295,11 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 			var keys = languages[lang]["keys"];
 
 			if (typeof keys[identifier] === 'object') {
-				console.log("Identifier " + identifier + " contain substrings, use dot notation identifiers to get your value\nSubstrings : ", keys[identifier]);
-				return ("[Identifier " + identifier + " contain substrings, use dot notation identifiers to get your value");
+				console.log("Identifier '" + identifier + "' contain substrings, use dot notation identifiers to get your value\nSubstrings : ", keys[identifier]);
+				return ("[Identifier '" + identifier + "' contain substrings, use dot notation identifiers to get your value");
 			}
 			else if (!keys.hasOwnProperty(identifier) && typeof dotHandler(keys, identifier) == 'undefined') {
-				return ("[Unknown identifier " + identifier + "] for language [" + lang + "]");
+				return ("[Unknown identifier '" + identifier + "'] for language [" + lang + "]");
 			}
 			else if (dotHandler(keys, identifier)) {
 				return (parseVariables(dotHandler(keys, identifier)));
@@ -311,6 +326,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 		var self = this;
 
 		console.log("Runtime : ", self.runtime);
+		cur_runtime = self.runtime;
 
 		var instanceObj = self.runtime.objectsByUid;
 		$.each(instanceObj, function (index, value) {

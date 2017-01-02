@@ -31,10 +31,21 @@ There are two types of files :
 Here the file is **en.lang**
 ```javascript
 {
-    "hello" : "Hello, world!\n",
-    "stupid_string" : "Orangutan has %d banana.\n", //"identifier" : "value"
+    "hello" : "Hello, world!",
+    "stupid_string" : "This is a stupid string", //"identifier" : "value"
     "try" : "try try try",
     "thanks" : "Thank for using."
+}
+```
+
+You can also make nested identifiers to make it more clean
+```javascript
+{
+    "hello" : "Hello, world!",
+    "menu" : {
+    	"newgame" : "New Game",
+    	"continue" : "Continue"
+    }
 }
 ```
 
@@ -54,6 +65,9 @@ Text > Set text to **ProjectTranslation.GetString(currentLang, "hello")**
 * All the text that have a **lang** instance variables are translated to the right text
 
 No more pain :)
+
+*Note* : To access nested identifiers use *dot notation* : 
+`menu.continue` will output `Continue`
 
 ## Coming
 * Variables support
