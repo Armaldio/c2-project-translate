@@ -69,6 +69,4 @@ No more pain :)
 *Note* : To access nested identifiers use *dot notation* : 
 `menu.continue` will output `Continue`
 
-## Coming
-* Variables support
-* Plugin ACE table
+*Note2* : To access global variables use **@fullVariableName** : 
