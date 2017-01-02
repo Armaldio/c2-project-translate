@@ -10,9 +10,6 @@ var langsLoaded = 0;
 
 var langlist = {};
 
-
-/////////////////////////////////////
-// Plugin class
 cr.plugins_.armaldio_project_translate = function (runtime) {
 	this.runtime = runtime;
 };
@@ -20,8 +17,6 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 (function () {
 	var pluginProto = cr.plugins_.armaldio_project_translate.prototype;
 
-	/////////////////////////////////////
-	// Object type class
 	pluginProto.Type = function (plugin) {
 		this.plugin  = plugin;
 		this.runtime = plugin.runtime;
@@ -32,8 +27,6 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 	typeProto.onCreate = function () {
 	};
 
-	/////////////////////////////////////
-	// Instance class
 	pluginProto.Instance = function (type) {
 		this.type    = type;
 		this.runtime = type.runtime;
@@ -46,12 +39,9 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 			alert("Remote url not defined ! Pleas configure it in the properties of the plugin");
 	};
 
-	/**BEGIN-PREVIEWONLY**/
 	instanceProto.getDebuggerValues = function (propsections) {
 		propsections.push({});
 	};
-	/**END-PREVIEWONLY**/
-
 
 	var next_request_headers = {};
 	var next_override_mime   = "";
@@ -200,10 +190,6 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 		}
 	};
 
-	function isCached() {
-		return localStorage.getItem("langcache") !== null;
-	}
-
 	String.prototype.startsWith = function (prefix) {
 		return this.indexOf(prefix) === 0;
 	};
@@ -216,7 +202,17 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 	Cnds.prototype.OnImportSuccess = function (tag) {
 		var self = this;
 
-		//console.log(self);
+		//TODO check JSON first
+		/*
+		 function IsJsonString(str) {
+		 try {
+		 JSON.parse(str);
+		 } catch (e) {
+		 return false;
+		 }
+		 return true;
+		 }
+		 */
 
 		if (self.curTag === "langlist") {
 			langlist = JSON.parse(self.lastData);
@@ -248,7 +244,6 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 
 			langsLoaded += 1;
 			if (langsLoaded === langsToLoad) {
-				console.log(languages);
 				return true;
 			}
 		}
@@ -263,56 +258,43 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 		return cr.equals_nocase(tag, this.curTag);
 	};
 
-	/*
-	 Cnds.prototype.IsCached = function () {
-	 console.log("lanaguages are offline : ", isCached());
-	 return isCached();
-	 };
-
-	 Cnds.prototype.OutdatedCache = function () {
-	 var outdated = false;
-
-	 $.ajax({
-	 url     : this.remoteurl,
-	 async   : false,
-	 dataType: "text",
-	 success : function (d) {
-	 var data = JSON.parse(d);
-	 for (var key in data) {
-	 if (key === "version") {
-	 var remoteVersion = parseFloat(data[key]);
-	 console.log("Remote version = ", remoteVersion);
-
-	 var localVersion = parseFloat(localStorage.getItem("langversion"));
-	 console.log("Local version = ", localVersion);
-
-	 if (remoteVersion > localVersion) {
-	 console.log("Cache is outdated");
-	 outdated = true;
-	 break;
-	 }
-	 }
-	 }
-	 }
-	 });
-	 return outdated;
-	 };
-	 */
-
 	pluginProto.cnds = new Cnds();
 
+	function dotHandler(obj, str) {
+		str = str.split(".");
+		for (var i = 0; i < str.length; i++) {
+			if (obj.hasOwnProperty(str[i]))
+				obj = obj[str[i]];
+			else
+				return undefined;
+		}
+		return obj;
+	}
+
+	function parseVariables(str) {
+		return str;
+	}
+
 	function getString(lang, identifier) {
-		//console.log("a", languages[lang]["keys"].hasOwnProperty(identifier));
 		if (lang in languages) {
-			if (languages[lang]["keys"].hasOwnProperty(identifier)) {
-				return (languages[lang]["keys"][identifier]);
+			var keys = languages[lang]["keys"];
+
+			if (typeof keys[identifier] === 'object') {
+				console.log("Identifier " + identifier + " contain substrings, use dot notation identifiers to get your value\nSubstrings : ", keys[identifier]);
+				return ("[Identifier " + identifier + " contain substrings, use dot notation identifiers to get your value");
+			}
+			else if (!keys.hasOwnProperty(identifier) && typeof dotHandler(keys, identifier) == 'undefined') {
+				return ("[Unknown identifier " + identifier + "] for language [" + lang + "]");
+			}
+			else if (dotHandler(keys, identifier)) {
+				return (parseVariables(dotHandler(keys, identifier)));
 			}
 			else {
-				return ("[Unknown identifier " + identifier + " ]");
+				return ("[Unknown error]");
 			}
 		}
 		else {
-			return ("[Unknown language]");
+			return ("[Unknown language = " + lang + "]");
 		}
 	}
 
@@ -321,74 +303,14 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 	function Acts() {
 	};
 
-	/*
-	 Acts.prototype.Import = function (cache) {
-	 var self = this;
-
-	 try {
-
-	 $.ajax({
-	 url     : this.remoteurl,
-	 async   : false,
-	 dataType: "text",
-	 success : function (d) {
-	 var list = JSON.parse(d);
-
-	 console.log("list", list);
-
-	 for (var langname in list) {
-	 if (langname === "version") {
-	 localStorage.setItem("langversion", list[langname]);
-	 } else if (list.hasOwnProperty(langname)) {
-	 var url = list[langname];
-	 $.ajax({
-	 url     : url,
-	 async   : false,
-	 dataType: "text",
-	 success : function (data) {
-	 var langdata        = JSON.parse(data);
-	 languages[langname] = langdata;
-	 }
-	 });
-	 }
-	 }
-
-	 console.log("cache : ", cache, "localstorage", typeof localStorage != 'undefined');
-	 if (cache == 1 && typeof localStorage != 'undefined') {
-	 console.log("Caching");
-	 localStorage.setItem("langcache", JSON.stringify(languages));
-	 }
-	 self.runtime.trigger(cr.plugins_.armaldio_project_translate.prototype.cnds.OnLoadSuccess, self);
-	 console.log(languages);
-	 }
-	 });
-	 } catch (e) {
-	 console.log("Error Importing : ", e);
-	 self.runtime.trigger(cr.plugins_.armaldio_project_translate.prototype.cnds.OnLoadSuccess, self);
-	 }
-	 };
-
-	 Acts.prototype.LoadFromCache = function () {
-	 var self = this;
-
-	 if (isCached()) {
-	 var cache = localStorage.getItem("langcache");
-	 languages = JSON.parse(cache);
-	 console.log("Loading from cache", languages);
-	 self.runtime.trigger(cr.plugins_.armaldio_project_translate.prototype.cnds.OnLoadSuccess, self);
-	 }
-	 else {
-	 alert("Cannot load languages from cache !");
-	 }
-	 };
-	 */
-
 	Acts.prototype.ImportFileList = function (file_) {
 		this.doRequest("langlist", file_, "GET");
 	};
 
 	Acts.prototype.TranslateText = function (lang) {
 		var self = this;
+
+		console.log("Runtime : ", self.runtime);
 
 		var instanceObj = self.runtime.objectsByUid;
 		$.each(instanceObj, function (index, value) {
@@ -400,7 +322,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 						 * Text and spritefonts
 						 */
 						value.text = getString(lang, value.instance_vars[i]);
-						value.text_changed = true;
+						value.text_changed   = true;
 						value.runtime.redraw = true;
 
 						/**
@@ -421,19 +343,8 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 		});
 	};
 
-	/*
-	 Acts.prototype.RemoveCache = function () {
-	 var self   = this;
-	 var remove = localStorage.removeItem("langcache");
-	 //TODO error handling
-	 console.log("Remove : ", remove);
-	 };
-	 */
-
 	pluginProto.acts = new Acts();
 
-	//////////////////////////////////////
-	// Expressions
 	function Exps() {
 	};
 
