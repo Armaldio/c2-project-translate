@@ -2,11 +2,6 @@
 
 ### Translation made easy
 
-The plugin work for :
-* Text
-* Button
-* Spritefont/Spritefont+
-
 ## Configuration files
 There are two types of files : 
 * The language list
@@ -57,7 +52,13 @@ Text > Set text to **ProjectTranslation.GetString(currentLang, "hello")**
 **currentLang** is my current language, say **fr** or **en**
 **"hello"** is the identifier
 
-## The easy way (Default text plugin supported)
+## The easy way
+###Supported Objects
+* Text
+* Button
+* Spritefont/Spritefont+
+
+###How to set up
 * Create a new text using the default text plugin
 * Create a new instance variable called **lang** and assign an identifier to its value
 ![Image of Yaktocat](img/instancevar.png)
@@ -69,4 +70,4 @@ No more pain :)
 *Note* : To access nested identifiers use *dot notation* : 
 `menu.continue` will output `Continue`
 
-*Note2* : To access global variables use **@fullVariableName** : 
+*Note2* : To access global variables use **@fullVariableName**
