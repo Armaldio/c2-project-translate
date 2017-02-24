@@ -219,14 +219,14 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 			langlist = JSON.parse(self.lastData);
 
 			var count = 0;
-			$.each(langlist, function (index, value) {
+			jQuery.each(langlist, function (index, value) {
 				if (index !== "version") {
 					count++;
 				}
 				langsToLoad = count;
 			});
 
-			$.each(langlist, function (index, value) {
+			jQuery.each(langlist, function (index, value) {
 				if (index !== "version") {
 					if (!languages[index])
 						languages[index] = {};
@@ -237,7 +237,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 		}
 		else {
 			var data = JSON.parse(self.lastData);
-			$.each(data, function (key, value) {
+			jQuery.each(data, function (key, value) {
 				if (!languages[self.curTag]["keys"])
 					languages[self.curTag]["keys"] = {};
 				languages[self.curTag]["keys"][key] = value;
@@ -329,7 +329,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 		cur_runtime = self.runtime;
 
 		var instanceObj = self.runtime.objectsByUid;
-		$.each(instanceObj, function (index, value) {
+		jQuery.each(instanceObj, function (index, value) {
 			if (value.instance_var_names) {
 				var varnames = value.instance_var_names;
 				$.each(varnames, function (i, variable) {
@@ -379,7 +379,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 			ret.set_string(key);
 		}
 		else {
-			console.log("Language number " + index + " doen't exixts");
+			console.log("Language number " + index + " doesn't exists");
 		}
 	};
 
@@ -389,7 +389,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 			ret.set_string(languages[key].name);
 		}
 		else {
-			console.log("Language number " + index + " doen't exixts");
+			console.log("Language number " + index + " doesn't exists");
 		}
 	};
 
