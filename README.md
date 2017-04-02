@@ -53,12 +53,12 @@ Text > Set text to **ProjectTranslation.GetString(currentLang, "hello")**
 **"hello"** is the identifier
 
 ## The easy way
-###Supported Objects
+### Supported Objects
 * Text
 * Button
 * Spritefont/Spritefont+
 
-###How to set up
+### How to set up
 * Create a new text using the default text plugin
 * Create a new instance variable called **lang** and assign an identifier to its value
 ![Image of Yaktocat](img/instancevar.png)
