@@ -197,7 +197,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 
 	//////////////////////////////////////
 	// Conditions
-	function Cnds() {
+	function Cnds () {
 	};
 
 	Cnds.prototype.OnImportSuccess = function (tag) {
@@ -227,21 +227,49 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 			});
 
 			jQuery.each(langlist, function (index, value) {
+				//console.log("index", index, "value", value);
 				if (index !== "version") {
 					if (!languages[index])
 						languages[index] = {};
 					languages[index]["name"] = value.name;
-					self.doRequest(index, value.path, "GET");
+
+					if (typeof value.path === 'string') {
+						//console.log("Do request for : " + index);
+						self.doRequest(index, value.path, "GET");
+					}
+					else {
+						value.path.forEach(function (item, i) {
+							//console.log("Do request for : " + item);
+							self.doRequest(index, item, "GET");
+						});
+					}
 				}
 			});
 		}
 		else {
 			var data = JSON.parse(self.lastData);
+			//console.log("------------- RECEIVED : " + self.curTag);
+			//console.log("data I got : ", data);
 			jQuery.each(data, function (key, value) {
 				if (!languages[self.curTag]["keys"])
 					languages[self.curTag]["keys"] = {};
-				languages[self.curTag]["keys"][key] = value;
+
+				//console.log("will add ", value, " to ", key);
+
+				///for (var attrname in obj2) { obj1[attrname] = obj2[attrname]; }
+
+				//console.log("already contain : " + languages[self.curTag]["keys"][key]);
+				if (languages[self.curTag]["keys"][key] === undefined) {
+					//console.log("that's it, set");
+					languages[self.curTag]["keys"][key] = value;
+				}
+				else {
+					//console.log("extending : ");
+					jQuery.extend(true, languages[self.curTag]["keys"][key], value);
+				}
 			});
+
+			//console.log(languages);
 
 			langsLoaded += 1;
 			if (langsLoaded === langsToLoad) {
@@ -261,7 +289,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 
 	pluginProto.cnds = new Cnds();
 
-	function dotHandler(obj, str) {
+	function dotHandler (obj, str) {
 		str = str.split(".");
 		for (var i = 0; i < str.length; i++) {
 			if (obj.hasOwnProperty(str[i]))
@@ -272,7 +300,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 		return obj;
 	}
 
-	function getGlobalVar(varname) {
+	function getGlobalVar (varname) {
 		var self = this;
 
 		cur_runtime.all_global_vars.forEach(function (val, index) {
@@ -284,17 +312,21 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 		return varname;
 	}
 
-	function parseVariables(str) {
+	function parseVariables (str) {
 		return str.replace(/@(\w+)/g, function (_, $1) {
 			return getGlobalVar($1);
 		});
 	}
 
-	function getString(lang, identifier) {
+	function getString (lang, identifier) {
 		if (lang in languages) {
 			var keys = languages[lang]["keys"];
 
-			if (typeof keys[identifier] === 'object') {
+			if (keys === undefined) {
+				console.log("Empty language");
+				return ("[Unknown error]");
+			}
+			else if (typeof keys[identifier] === 'object') {
 				console.log("Identifier '" + identifier + "' contain substrings, use dot notation identifiers to get your value\nSubstrings : ", keys[identifier]);
 				return ("[Identifier '" + identifier + "' contain substrings, use dot notation identifiers to get your value");
 			}
@@ -315,7 +347,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 
 	//////////////////////////////////////
 	// Actions
-	function Acts() {
+	function Acts () {
 	};
 
 	Acts.prototype.ImportFileList = function (file_) {
@@ -325,7 +357,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 	Acts.prototype.TranslateText = function (lang) {
 		var self = this;
 
-		console.log("Runtime : ", self.runtime);
+		//console.log("Runtime : ", self.runtime);
 		cur_runtime = self.runtime;
 
 		var instanceObj = self.runtime.objectsByUid;
@@ -361,7 +393,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 
 	pluginProto.acts = new Acts();
 
-	function Exps() {
+	function Exps () {
 	};
 
 	Exps.prototype.LanguagesNumber = function (ret) {

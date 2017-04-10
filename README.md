@@ -1,8 +1,10 @@
 # Construct 2 Translation Plugin
 
-### Translation made easy
+## Translation made easy
 
-## Configuration files
+[Plugin ACEs table](./acetable.md)
+
+### Configuration files
 There are two types of files : 
 * The language list
 * The languages files
@@ -70,4 +72,4 @@ No more pain :)
 *Note* : To access nested identifiers use *dot notation* : 
 `menu.continue` will output `Continue`
 
-*Note2* : To access global variables use **@fullVariableName**
+*Note2* : To access global variables use **@fullVariableName** 
