@@ -65,7 +65,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 
 		var errorFunc = function () {
 			// In node-webkit, try looking up the file on disk instead since it wasn't found in the project.
-			if (isNWjs) {
+			if (self.runtime.isNWjs) {
 				var filepath = nw_appfolder + url_;
 
 				if (fs["existsSync"](filepath)) {
@@ -118,7 +118,7 @@ cr.plugins_.armaldio_project_translate = function (runtime) {
 						// In node-webkit, don't trigger 'on success' with empty string if file not found.
 						// In a browser also don't trigger 'on success' if the returned string is empty and the status is 0,
 						// which is what happens when onerror is about to fire.
-						if ((!isNWjs || self.lastData.length) && !(!isNWjs && request.status === 0 && !self.lastData.length))
+						if ((!self.runtime.isNWjs || self.lastData.length) && !(!self.runtime.isNWjs && request.status === 0 && !self.lastData.length))
 							self.runtime.trigger(cr.plugins_.armaldio_project_translate.prototype.cnds.OnImportSuccess, self);
 					}
 				}
