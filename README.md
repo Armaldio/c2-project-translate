@@ -1,3 +1,9 @@
+# This tool is deprecated
+This plugin doesn't work correctly on export
+See this updated [plugin + behaviour](https://armaldio.itch.io/translation-plugin-c2)
+
+[Why it's not working ? ](https://www.scirra.com/forum/viewtopic.php?f=154&t=190435&p=1115704#p1115704)
+
 # Construct 2 Translation Plugin
 
 ## Translation made easy
